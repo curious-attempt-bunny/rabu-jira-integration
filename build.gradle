@@ -1,0 +1,16 @@
+apply plugin: 'groovy'
+apply plugin: 'application'
+apply plugin: 'eclipse'
+
+mainClassName = 'com.curiousattemptbunny.rabu.jira.Spike'
+
+repositories {
+	mavenCentral()
+	mavenRepo urls: ['https://maven.atlassian.com/content/repositories/atlassian-public', 'http://download.java.net/maven/2']
+}
+
+dependencies {
+	groovy 'org.codehaus.groovy:groovy-all:1.8.0'
+	
+	compile 'com.atlassian.jira:jira-rest-java-client:0.2'
+}
