@@ -4,25 +4,43 @@ apply plugin: 'eclipse'
 
 mainClassName = 'com.curiousattemptbunny.rabu.jira.Spike'
 
+configurations {
+	axis
+}
+
 repositories {
 	mavenCentral()
-	mavenRepo urls: [
-		'https://maven.atlassian.com/content/repositories/atlassian-public',
-		'http://download.java.net/maven/2'
-	]
 }
 
 dependencies {
 	groovy 'org.codehaus.groovy:groovy-all:1.8.0'
 	
-	compile 'com.atlassian.jira:jira-rest-java-client:0.2'
-	compile 'com.sun.jersey:jersey-client:1.5'
-	compile 'com.sun.jersey:jersey-core:1.5'
-	compile 'commons-httpclient:commons-httpclient:3.1'
-	compile 'org.codehaus.jettison:jettison:1.1'
-	compile 'com.sun.xml.bind:jaxb-impl:2.2.3'
-	compile 'org.codehaus.jackson:jackson-core-asl:1.5.5'
-	compile 'org.codehaus.jackson:jackson-mapper-asl:1.5.5'
+       compile 'com.atlassian.jira:jira-rest-java-client:0.2'
+       compile 'com.sun.jersey:jersey-client:1.5'
+      compile 'com.sun.jersey:jersey-core:1.5'
+       compile 'commons-httpclient:commons-httpclient:3.1'
+       compile 'org.codehaus.jettison:jettison:1.1'
+       compile 'com.sun.xml.bind:jaxb-impl:2.2.3'
+       compile 'org.codehaus.jackson:jackson-core-asl:1.5.5'
+       compile 'org.codehaus.jackson:jackson-mapper-asl:1.5.5'
     compile 'org.codehaus.jackson:jackson-jaxrs:1.5.5'
-    compile 'org.codehaus.jackson:jackson-xc:1.5.5'
+compile 'org.codehaus.jackson:jackson-xc:1.5.5'
+	
+	compile 'axis:axis:1.4'
+	axis 'axis:axis-ant:1.4', 'axis:axis:1.4'
 }
+
+sourceSets.main.java.srcDirs = ['src/generated/java', 'src/main/java']
+
+task wsdl2java() << {
+	ant.taskdef(
+		name: 'genClassesFromWSDL',
+		classname: 'org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask',
+		classpath: configurations.axis.asPath)
+	ant.genClassesFromWSDL(
+		url: "http://jira.atlassian.com//rpc/soap/jirasoapservice-v2?wsdl",
+		output: 'src/generated/java')
+}
+
+// TODO inputs & outputs
+// TODO compileJava.dependsOn(wsdl2java)
